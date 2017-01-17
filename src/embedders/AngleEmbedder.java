@@ -79,7 +79,7 @@ public class AngleEmbedder {
             s += add(currNode.getLayout().getCenter(), velocity).y;
             System.out.println(s);*/
             calc_graph.setNodeCenter(currNode, add(currNode.getLayout().getCenter(), velocity));
-            /*System.out.println("after");*/
+            /*System.out.println("after");//*/
 
             
         }
