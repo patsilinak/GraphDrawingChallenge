@@ -148,7 +148,7 @@ public class GraphDrawingChallenge {
         JButton button4 = new JButton("ANGLE SPRING");
         button4.addActionListener(new ActionListener() { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "Not");
+                angleEmbedder.motion(50, "Not", "nodeFirst");
                 graphComponent.fitGraphBounds();
             } 
         });
@@ -157,11 +157,20 @@ public class GraphDrawingChallenge {
         JButton button5 = new JButton("ANGLE SPRING ROTATE All");
         button5.addActionListener(new ActionListener() { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "rotateAll");
+                angleEmbedder.motion(50, "rotateAll", "nodeFirst");
                 graphComponent.fitGraphBounds();
             } 
         });
         toolbar.add(button5);
+        
+        JButton button8 = new JButton("ANGLE SIMULTANEOUS");
+        button8.addActionListener(new ActionListener() { 
+            public void actionPerformed(ActionEvent e) { 
+                angleEmbedder.motion(50, "rotateAll", "velocityFirst");
+                graphComponent.fitGraphBounds();
+            } 
+        });
+        toolbar.add(button8);
         
         JFrame frame = new JFrame("Graph Competition");
         frame.setSize(500, 600);
