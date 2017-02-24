@@ -18,8 +18,8 @@ import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.log;
 import static java.lang.Math.sin;
-import static java.lang.System.exit;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -39,14 +39,15 @@ public class AngleEmbedder {
         speed = 1;
     }
     
-    public void motion(int M, String mode){
+    public void motion(int M, String mode, String priority){
         for (int i = 0; i<M; i++)
-            move(mode);
+            move(mode, priority);
     }
     
-        private void move(String mode){
+    private void move(String mode, String priority){
         
         IListEnumerable<INode> nodes = calc_graph.getNodes();
+        ArrayList<PointD> nodesVelocities = new ArrayList<>();
 
         for (INode currNode : nodes){
             
@@ -68,6 +69,7 @@ public class AngleEmbedder {
             
             velocity = add(velocity, force);
             velocity = times(velocity, speed);
+            nodesVelocities.add(velocity);
             /// TEST!!!!!!!
             /*String s = "Before, node x=";
             s += currNode.getLayout().getCenter().x;
@@ -78,11 +80,21 @@ public class AngleEmbedder {
             s += " , ";
             s += add(currNode.getLayout().getCenter(), velocity).y;
             System.out.println(s);*/
-            calc_graph.setNodeCenter(currNode, add(currNode.getLayout().getCenter(), velocity));
-            /*System.out.println("after");//*/
-
-            
+            if (priority.equals("nodeFirst"));
+                calc_graph.setNodeCenter(currNode, add(currNode.getLayout().getCenter(), velocity));
+            /*System.out.println("after");//*/    
         }
+        
+        
+        //FIXME!!! Bad practice, should use list of objects with fiels for node
+        //and velocity. 
+        //FIXME!! Iterator use without check of hasNext() or need of use.
+        Iterator<PointD> nodesVelocitiesIterator = nodesVelocities.iterator();
+        if (priority.equals("velocityFirst"))
+            for (INode currNode : nodes)
+                calc_graph.setNodeCenter(currNode, add(currNode.getLayout().getCenter(), nodesVelocitiesIterator.next()));
+
+
     }
         
     private PointD angleSpring(Crossing crossing, String mode){
