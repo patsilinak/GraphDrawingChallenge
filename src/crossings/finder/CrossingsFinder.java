@@ -1,6 +1,8 @@
 /*Kosmas code
  * Thursday December 15th:
  * Corrected crossEdges (used to be crossLineSegment)
+ * 
+ * Corrected (/Changed) by Panagiotis
  */
 
 

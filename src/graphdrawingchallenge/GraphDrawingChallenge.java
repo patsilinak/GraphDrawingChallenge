@@ -19,11 +19,17 @@ import static graphdrawingchallenge.tools.randomizer.randomize;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -34,6 +40,9 @@ import javax.swing.WindowConstants;
  * @author Panagiotis
  */
 public class GraphDrawingChallenge {
+    
+    //mabye should put in different class
+    public static boolean blockNewCrossings = true;
     
     private  GraphComponent graphComponent;
     private IGraph graph;
@@ -72,46 +81,113 @@ public class GraphDrawingChallenge {
     private JFrame frameCreator(){
         JToolBar toolbar = new JToolBar();
  
-        JButton button = new JButton("OPEN");
-        button.addActionListener(new ActionListener() { 
+        
+        final JPopupMenu file = new JPopupMenu();
+        
+      //  JButton button = new JButton("OPEN");
+      //  button.addActionListener(new ActionListener() { 
+        file.add(new JMenuItem(new AbstractAction("Open") {
             public void actionPerformed(ActionEvent e) { 
                 try {parser.fileReader();}catch(IOException exc){}
                 graphComponent.fitGraphBounds();
                 //graphComponent.fitContent();
             } 
-        });
-        toolbar.add(button);
+      }));
+     //   });
+      //  toolbar.add(button);
         
-        JButton button1 = new JButton("SAVE");
-        button1.addActionListener(new ActionListener() { 
+        file.add(new JMenuItem(new AbstractAction("Save") {
             public void actionPerformed(ActionEvent e) { 
                 parser.fileSaver(graph);
                 graphComponent.fitGraphBounds();
                 //graphComponent.fitContent();
             } 
+        }));
+  
+        final JButton fileButton = new JButton("File");
+        fileButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                file.show(e.getComponent(), e.getX(), e.getY());
+            }
         });
-        toolbar.add(button1);
+        toolbar.add(fileButton);
+    
         
-        JButton button6 = new JButton("RANDOMIZE");
-        button6.addActionListener(new ActionListener() { 
+        
+        final JPopupMenu preembedders = new JPopupMenu();   
+    //    JButton button6 = new JButton("RANDOMIZE");
+     //   button6.addActionListener(new ActionListener() {
+        preembedders.add(new JMenuItem(new AbstractAction("Randomize") {
             public void actionPerformed(ActionEvent e) { 
                 randomize(graph);
                 graphComponent.fitGraphBounds();
                 //graphComponent.fitContent();
             } 
-        });
-        toolbar.add(button6);
+        }));
         
-        JButton button7 = new JButton("Crossings Min?");
-        button7.addActionListener(new ActionListener() { 
+//        JButton button7 = new JButton("Crossings Min?");
+//        button7.addActionListener(new ActionListener() { 
+        preembedders.add(new JMenuItem(new AbstractAction("Crossings Min?") {
             public void actionPerformed(ActionEvent e) { 
                 minimizeCrossings(graph);
                 graphComponent.fitGraphBounds();
                 //graphComponent.fitContent();
             } 
+        }));
+        
+        preembedders.add(new JMenuItem(new AbstractAction("Spring") {
+            public void actionPerformed(ActionEvent e) { 
+                springEmbedder.motion(5000);
+                graphComponent.fitGraphBounds();
+            } 
+        }));
+        
+        final JButton preembeddersButton = new JButton("Pre-Embedders");
+        preembeddersButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                preembedders.show(e.getComponent(), e.getX(), e.getY());
+            }
         });
-        toolbar.add(button7);
-               
+        toolbar.add(preembeddersButton);
+        
+        final JPopupMenu embedders = new JPopupMenu();   
+        embedders.add(new JMenuItem(new AbstractAction("Angle Spring") { 
+            public void actionPerformed(ActionEvent e) { 
+                angleEmbedder.motion(50, "Not", "nodeFirst");
+                graphComponent.fitGraphBounds();
+            } 
+        }));
+        
+        embedders.add(new JMenuItem(new AbstractAction("Angle Spring Rotate All") { 
+            public void actionPerformed(ActionEvent e) { 
+                angleEmbedder.motion(50 , "rotateAll", "nodeFirst");
+                graphComponent.fitGraphBounds();
+            } 
+        }));
+        
+        embedders.add(new JMenuItem(new AbstractAction("Angle Spring Simultaneous") { 
+            public void actionPerformed(ActionEvent e) { 
+                angleEmbedder.motion(50, "rotateAll", "velocityFirst");
+                graphComponent.fitGraphBounds();
+            } 
+        }));
+        
+        embedders.add(new JMenuItem(new AbstractAction("Angle Spring Move Smallest") { 
+            public void actionPerformed(ActionEvent e) { 
+                angleEmbedder.motion(50, "rotateAll", "nodeFirst", "Smallest");
+                graphComponent.fitGraphBounds();
+            } 
+        }));
+        
+        final JButton embeddersButton = new JButton("Embedders");
+        embeddersButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                embedders.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+        toolbar.add(embeddersButton);
+        
+        //final JPopupMenu tools = new JPopupMenu();   
         JButton button2 = new JButton("Smallest Angle");
         button2.addActionListener(new ActionListener() { 
             public void actionPerformed(ActionEvent e) { 
@@ -136,41 +212,16 @@ public class GraphDrawingChallenge {
         });
         toolbar.add(button2);
         
-        JButton button3 = new JButton("SPRING");
-        button3.addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) { 
-                springEmbedder.motion(5000);
-                graphComponent.fitGraphBounds();
-            } 
+        JCheckBox blockNewCrossingsCheckbox = new JCheckBox("Block New Crossigns", true);
+        blockNewCrossingsCheckbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                if (blockNewCrossingsCheckbox.isSelected())
+                    blockNewCrossings = true; 
+                else
+                    blockNewCrossings = false; 
+            }
         });
-        toolbar.add(button3);
-        
-        JButton button4 = new JButton("ANGLE SPRING");
-        button4.addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "Not", "nodeFirst");
-                graphComponent.fitGraphBounds();
-            } 
-        });
-        toolbar.add(button4);
-        
-        JButton button5 = new JButton("ANGLE SPRING ROTATE All");
-        button5.addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "rotateAll", "nodeFirst");
-                graphComponent.fitGraphBounds();
-            } 
-        });
-        toolbar.add(button5);
-        
-        JButton button8 = new JButton("ANGLE SIMULTANEOUS");
-        button8.addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "rotateAll", "velocityFirst");
-                graphComponent.fitGraphBounds();
-            } 
-        });
-        toolbar.add(button8);
+        toolbar.add(blockNewCrossingsCheckbox);
         
         JFrame frame = new JFrame("Graph Competition");
         frame.setSize(500, 600);

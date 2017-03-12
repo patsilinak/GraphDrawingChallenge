@@ -14,6 +14,7 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.utils.IListEnumerable;
 import crossings.finder.Crossing;
 import static crossings.finder.CrossingsFinder.BFAllCrossings;
+import static graphdrawingchallenge.GraphDrawingChallenge.blockNewCrossings;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.log;
@@ -39,12 +40,27 @@ public class AngleEmbedder {
         speed = 1;
     }
     
+    //Overloads for motion, should be done with varargs
     public void motion(int M, String mode, String priority){
         for (int i = 0; i<M; i++)
             move(mode, priority);
     }
     
+    public void motion(int M, String mode, String priority, String anglesOfInterest){
+        for (int i = 0; i<M; i++)
+            move(mode, priority, anglesOfInterest);
+    }
+    //overloads for move()
+    //probably should only be done for motion
+    private void move(String mode){
+        move(mode, "nodeFirst");
+    }
+    
     private void move(String mode, String priority){
+        move (mode, priority, "All");
+    }
+    
+    private void move(String mode, String priority, String anglesOfInterest){
         
         IListEnumerable<INode> nodes = calc_graph.getNodes();
         ArrayList<PointD> nodesVelocities = new ArrayList<>();
@@ -54,9 +70,12 @@ public class AngleEmbedder {
             crossings = BFAllCrossings(calc_graph);
             PointD velocity = new PointD(0,0); 
             PointD force = new PointD(0,0);
+            PointD previousNodeLocation = new PointD(0,0);
+            Crossing smallestCross = new Crossing(null, null, 180);
+            boolean smallestCrossFlag = false;
+            int previousCrossingsNumber = 0;
             for (Crossing currCross : crossings){
-                // Κοιτάμε μόνο τα destinations γιατί αν μετακινήσουμε αυτά,
-                //φτοιάχνουν ταυτόχρονα και οι γωνίες από την μεριά των sources
+                /*
                 if ((currCross.getIndexOfFirstSeg().getTargetNode() == currNode))
                     force = add(force, angleSpring(currCross, "leftTarget"));
                 if ((currCross.getIndexOfSecondSeg().getTargetNode() == currNode))
@@ -65,7 +84,25 @@ public class AngleEmbedder {
                     force = add(force, angleSpring(currCross, "leftSource"));
                 if ((currCross.getIndexOfSecondSeg().getSourceNode() == currNode) && mode.equals("rotateAll"))
                     force = add(force, angleSpring(currCross, "rightSource"));
+                */
+                if (!smallestCrossFlag){
+                    smallestCross = currCross;
+                    smallestCrossFlag = true;
+                }
+                if ((currCross.getIndexOfFirstSeg().getTargetNode() == currNode) ||
+                    (currCross.getIndexOfSecondSeg().getTargetNode() == currNode)||
+                    (currCross.getIndexOfFirstSeg().getSourceNode() == currNode) ||
+                    (currCross.getIndexOfSecondSeg().getSourceNode() == currNode))
+                    if(smallestCross.getSineOfAngle() > currCross.getSineOfAngle())
+                        smallestCross = currCross;
+                
+                if (anglesOfInterest.equals("All"))
+                    force = add(force, angleSpringCaller(mode, currCross, currNode));
+                
             }
+            
+            if (anglesOfInterest.equals("Smallest") && smallestCrossFlag)
+                force = add(force, angleSpringCaller(mode, smallestCross, currNode));
             
             velocity = add(velocity, force);
             velocity = times(velocity, speed);
@@ -80,9 +117,16 @@ public class AngleEmbedder {
             s += " , ";
             s += add(currNode.getLayout().getCenter(), velocity).y;
             System.out.println(s);*/
-            if (priority.equals("nodeFirst"));
+            if (blockNewCrossings){
+                previousNodeLocation = currNode.getLayout().getCenter();
+                previousCrossingsNumber = crossings.size();
+            }
+            if (priority.equals("nodeFirst"))
                 calc_graph.setNodeCenter(currNode, add(currNode.getLayout().getCenter(), velocity));
-            /*System.out.println("after");//*/    
+            /*System.out.println("after");//*/  
+            
+            if (blockNewCrossings && BFAllCrossings(calc_graph).size() > previousCrossingsNumber)
+                calc_graph.setNodeCenter(currNode, previousNodeLocation);
         }
         
         
@@ -95,6 +139,19 @@ public class AngleEmbedder {
                 calc_graph.setNodeCenter(currNode, add(currNode.getLayout().getCenter(), nodesVelocitiesIterator.next()));
 
 
+    }
+    
+    private PointD angleSpringCaller(String mode, Crossing cross, INode currNode){
+                if ((cross.getIndexOfFirstSeg().getTargetNode() == currNode))
+                    return angleSpring(cross, "leftTarget");
+                if ((cross.getIndexOfSecondSeg().getTargetNode() == currNode))
+                    return angleSpring(cross, "rightTarget");
+                if ((cross.getIndexOfFirstSeg().getSourceNode() == currNode) && mode.equals("rotateAll"))
+                    return angleSpring(cross, "leftSource");
+                if ((cross.getIndexOfSecondSeg().getSourceNode() == currNode) && mode.equals("rotateAll"))
+                    return angleSpring(cross, "rightSource");
+                
+                return new PointD(0,0);
     }
         
     private PointD angleSpring(Crossing crossing, String mode){
@@ -118,7 +175,7 @@ public class AngleEmbedder {
                 direction = getTangent(leftSource, leftTarget, rightSource);
                 break;
             case "rightSource":
-                direction = getTangent(rightSource, rightTarget, rightSource);
+                direction = getTangent(rightSource, rightTarget, leftSource); ////////!!!!Corrected rightSource to leftSource
                 break;
                 
         }
@@ -141,7 +198,9 @@ public class AngleEmbedder {
         
         PointD direction = new PointD(px, py);
         if(abs(px)!=0)
-            direction = new PointD(px/abs(px), py/abs(px));      
+            direction = new PointD(px/abs(px), py/abs(px));    
+        
+        //FIXME !!! else;
         
 
         if (add(direction, mover).distanceTo(repeller) > add(negate(direction), mover).distanceTo(repeller)){
