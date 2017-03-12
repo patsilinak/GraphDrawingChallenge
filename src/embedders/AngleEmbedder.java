@@ -14,12 +14,17 @@ import com.yworks.yfiles.graph.INode;
 import com.yworks.yfiles.utils.IListEnumerable;
 import crossings.finder.Crossing;
 import static crossings.finder.CrossingsFinder.BFAllCrossings;
+import static graphdrawingchallenge.GraphDrawingChallenge.anglesPercentage;
 import static graphdrawingchallenge.GraphDrawingChallenge.blockNewCrossings;
+import static graphdrawingchallenge.GraphDrawingChallenge.useSmallestAngles;
+import graphdrawingchallenge.tools.CrossingComparator;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.log;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -68,12 +73,29 @@ public class AngleEmbedder {
         for (INode currNode : nodes){
             
             crossings = BFAllCrossings(calc_graph);
+            ArrayList<Crossing> sortedCrossings= crossings;
             PointD velocity = new PointD(0,0); 
             PointD force = new PointD(0,0);
             PointD previousNodeLocation = new PointD(0,0);
             Crossing smallestCross = new Crossing(null, null, 180);
             boolean smallestCrossFlag = false;
             int previousCrossingsNumber = 0;
+            
+
+            //Sorting and cropping for case of using only the smallest angles
+            Crossing hey;
+            int crossingsSize = sortedCrossings.size();
+            if (useSmallestAngles){
+                Collections.sort(sortedCrossings, new CrossingComparator());
+                //Badbadbad
+                for (int i = 0; i < crossingsSize - (int) (crossingsSize*anglesPercentage); i++){
+                    hey = sortedCrossings.get(sortedCrossings.size() - 1);
+                    sortedCrossings.remove(hey);
+                }
+                crossings = sortedCrossings;
+               // crossings = sortedCrossings.subList(0, min(sortedCrossings.size(), (int) (sortedCrossings.size()/anglesPercentage)));
+            }
+            
             for (Crossing currCross : crossings){
                 /*
                 if ((currCross.getIndexOfFirstSeg().getTargetNode() == currNode))

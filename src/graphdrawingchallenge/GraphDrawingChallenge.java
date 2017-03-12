@@ -43,6 +43,8 @@ public class GraphDrawingChallenge {
     
     //mabye should put in different class
     public static boolean blockNewCrossings = true;
+    public static boolean useSmallestAngles = false;
+    public static double anglesPercentage = 0.3;
     
     private  GraphComponent graphComponent;
     private IGraph graph;
@@ -153,28 +155,28 @@ public class GraphDrawingChallenge {
         final JPopupMenu embedders = new JPopupMenu();   
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "Not", "nodeFirst");
+                angleEmbedder.motion(5000, "Not", "nodeFirst");
                 graphComponent.fitGraphBounds();
             } 
         }));
         
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Rotate All") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50 , "rotateAll", "nodeFirst");
+                angleEmbedder.motion(1 , "rotateAll", "nodeFirst");
                 graphComponent.fitGraphBounds();
             } 
         }));
         
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Simultaneous") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "rotateAll", "velocityFirst");
+                angleEmbedder.motion(5000, "rotateAll", "velocityFirst");
                 graphComponent.fitGraphBounds();
             } 
         }));
         
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Move Smallest") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(50, "rotateAll", "nodeFirst", "Smallest");
+                angleEmbedder.motion(5000, "rotateAll", "nodeFirst", "Smallest");
                 graphComponent.fitGraphBounds();
             } 
         }));
@@ -223,8 +225,19 @@ public class GraphDrawingChallenge {
         });
         toolbar.add(blockNewCrossingsCheckbox);
         
+        JCheckBox useSmallestAnglesCheckbox = new JCheckBox("Only smallest angles", false);
+        useSmallestAnglesCheckbox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                if (useSmallestAnglesCheckbox.isSelected())
+                    useSmallestAngles = true; 
+                else
+                    useSmallestAngles = false; 
+            }
+        });
+        toolbar.add(useSmallestAnglesCheckbox);
+        
         JFrame frame = new JFrame("Graph Competition");
-        frame.setSize(500, 600);
+        frame.setSize(700, 800);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
