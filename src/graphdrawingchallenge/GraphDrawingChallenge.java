@@ -155,28 +155,28 @@ public class GraphDrawingChallenge {
         final JPopupMenu embedders = new JPopupMenu();   
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(5000, "Not", "nodeFirst");
+                angleEmbedder.motion(500, "Not", "nodeFirst");
                 graphComponent.fitGraphBounds();
             } 
         }));
         
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Rotate All") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(1 , "rotateAll", "nodeFirst");
+                angleEmbedder.motion(500 , "rotateAll", "nodeFirst");
                 graphComponent.fitGraphBounds();
             } 
         }));
         
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Simultaneous") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(5000, "rotateAll", "velocityFirst");
+                angleEmbedder.motion(500, "rotateAll", "velocityFirst");
                 graphComponent.fitGraphBounds();
             } 
         }));
         
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Move Smallest") { 
             public void actionPerformed(ActionEvent e) { 
-                angleEmbedder.motion(5000, "rotateAll", "nodeFirst", "Smallest");
+                angleEmbedder.motion(500, "rotateAll", "nodeFirst", "Smallest");
                 graphComponent.fitGraphBounds();
             } 
         }));
