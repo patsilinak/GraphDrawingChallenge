@@ -67,6 +67,30 @@ public class FileParser {
         }
     }
     
+    public void fileReaderFromFile(File myFile) throws IOException{
+        
+        
+        //FIXME is this enough ??
+        nodeList = new ArrayList<INode>();
+
+      /*  for(IEdge edge : graph.getEdges())
+            graph.remove(edge);*/
+      //FIXME-USE THIS: IGraph.clear() 
+        while(graph.getEdges().size() != 0)
+            graph.remove(graph.getEdges().last());  
+      
+        while(graph.getNodes().size() != 0)
+            graph.remove(graph.getNodes().last());
+        parseStatus = 0;
+        
+        
+        try (Scanner scanner =  new Scanner(myFile)){
+            while (scanner.hasNextLine()){
+                addLine(scanner.nextLine());
+            }
+        }
+    }
+    
     private boolean fileOpener(){
         JFileChooser fc = new JFileChooser();
         int fileVal = fc.showOpenDialog(fc);
