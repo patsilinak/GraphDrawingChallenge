@@ -130,6 +130,7 @@ public class GraphDrawingChallenge {
         preembedders.add(new JMenuItem(new AbstractAction("Randomize") {
             public void actionPerformed(ActionEvent e) { 
                 randomize(graph);
+                findMin();
                 graphComponent.fitGraphBounds();
                 //graphComponent.fitContent();
             } 
@@ -140,6 +141,7 @@ public class GraphDrawingChallenge {
         preembedders.add(new JMenuItem(new AbstractAction("Crossings Min?") {
             public void actionPerformed(ActionEvent e) { 
                 minimizeCrossings(graph);
+                findMin();
                 graphComponent.fitGraphBounds();
                 //graphComponent.fitContent();
             } 
@@ -148,6 +150,7 @@ public class GraphDrawingChallenge {
         preembedders.add(new JMenuItem(new AbstractAction("Spring") {
             public void actionPerformed(ActionEvent e) { 
                 springEmbedder.motion(5000);
+                findMin();
                 graphComponent.fitGraphBounds();
             } 
         }));
@@ -164,6 +167,7 @@ public class GraphDrawingChallenge {
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring") { 
             public void actionPerformed(ActionEvent e) { 
                 angleEmbedder.motion(500, "Not", "nodeFirst");
+                findMin();
                 graphComponent.fitGraphBounds();
             } 
         }));
@@ -171,6 +175,7 @@ public class GraphDrawingChallenge {
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Rotate All") { 
             public void actionPerformed(ActionEvent e) { 
                 angleEmbedder.motion(500 , "rotateAll", "nodeFirst");
+                findMin();
                 graphComponent.fitGraphBounds();
             } 
         }));
@@ -178,6 +183,7 @@ public class GraphDrawingChallenge {
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Simultaneous") { 
             public void actionPerformed(ActionEvent e) { 
                 angleEmbedder.motion(500, "rotateAll", "velocityFirst");
+                findMin();
                 graphComponent.fitGraphBounds();
             } 
         }));
@@ -185,6 +191,7 @@ public class GraphDrawingChallenge {
         embedders.add(new JMenuItem(new AbstractAction("Angle Spring Move Smallest") { 
             public void actionPerformed(ActionEvent e) { 
                 angleEmbedder.motion(500, "rotateAll", "nodeFirst", "Smallest");
+                findMin();
                 graphComponent.fitGraphBounds();
             } 
         }));
@@ -223,6 +230,7 @@ public class GraphDrawingChallenge {
         toolbar.add(button2);
         
         // Testers
+// Testers
         final JPopupMenu testers = new JPopupMenu();   
         testers.add(new JMenuItem(new AbstractAction("Randomize-MinCross-AngleSpring") {
             public void actionPerformed(ActionEvent e) { 
@@ -247,7 +255,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Randomize \n";
                 z += "Embedder: Angle Spring, " + steps + " steps";
-                    
+                findMin();    
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -275,7 +283,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Randomize \n";
                 z += "Embedder: Angle Spring Rotate All, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -303,7 +311,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Randomize \n";
                 z += "Embedder: Angle Spring Simultaneous, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -331,7 +339,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Randomize \n";
                 z += "Embedder: Angle Spring Smallest, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -363,7 +371,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Spring \n";
                 z += "Embedder: Angle Spring, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -391,7 +399,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Spring \n";
                 z += "Embedder: Angle Spring Rotate All, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -419,7 +427,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Spring \n";
                 z += "Embedder: Angle Spring Simultaneous, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -447,7 +455,7 @@ public class GraphDrawingChallenge {
                 z += "Action Performed: \n";
                 z += "Pre-Embedder: Spring \n";
                 z += "Embedder: Angle Spring Smallest Angle, " + steps + " steps";
-                    
+                    findMin();
                 JOptionPane.showMessageDialog(frame, z);
             } 
         }));
@@ -605,6 +613,7 @@ public class GraphDrawingChallenge {
 
 
 
+
             
         final JButton testersButton = new JButton("Testers");
         testersButton.addMouseListener(new MouseAdapter() {
@@ -643,7 +652,7 @@ public class GraphDrawingChallenge {
         toolbar.add(angleOutput);
         
         JFrame frame = new JFrame("Graph Competition");
-        frame.setSize(700, 800);
+        frame.setSize(800, 900);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
